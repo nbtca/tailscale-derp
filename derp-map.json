@@ -1,0 +1,19 @@
+{
+  "Regions": {
+    "999": {
+      "RegionID": 999,
+      "RegionCode": "SELFHOST",
+      "Nodes": [
+        {
+          "Name": "derp.selfhost",
+          "RegionID": 999,
+          "HostName": "derp.selfhost",
+          "IPv4": "127.0.0.1",
+          "DERPPort": 6666,
+          "STUNPort": 7777,
+          "InsecureForTests": true
+        }
+      ]
+    }
+  }
+}
