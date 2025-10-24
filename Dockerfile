@@ -1,25 +1,24 @@
-FROM golang:1.24.1 AS builder
+FROM golang:1.25-alpine3.22 AS builder
 
-# 安装必要的依赖
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+# 禁用 cgo，强制生成静态二进制，以便在 musl (Alpine) 中运行
+ENV CGO_ENABLED=0
+
+# 安装构建时必要的依赖（Alpine）
+# git: 用于从模块代理以外获取代码（保底），ca-certificates: HTTPS 模块拉取
+RUN apk add --no-cache ca-certificates git
 
 # 直接使用go install安装derper和derpprobe
 RUN go install tailscale.com/cmd/derper@latest
 RUN go install tailscale.com/cmd/derpprobe@latest
 
 # 第二阶段：最终运行环境
-FROM debian:bookworm-slim
+FROM alpine:3.22
 
 # 添加构建参数
 ARG DERP_HOST_ARG="derp.selfhost"
 
-# 安装运行时必要组件
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    tzdata \
-    && rm -rf /var/lib/apt/lists/*
+# 安装运行时必要组件（Alpine）
+RUN apk add --no-cache ca-certificates tzdata
 
 # 从第一阶段拷贝编译好的程序
 COPY --from=builder /go/bin/derper /usr/local/bin/derper
