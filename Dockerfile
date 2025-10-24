@@ -18,7 +18,8 @@ FROM alpine:3.22
 ARG DERP_HOST_ARG="derp.selfhost"
 
 # 安装运行时必要组件（Alpine）
-RUN apk add --no-cache ca-certificates tzdata
+# 添加 bash 和 openssl 以便运行 gen-certs.sh (脚本使用 bash 特性和 openssl)
+RUN apk add --no-cache ca-certificates tzdata bash openssl
 
 # 从第一阶段拷贝编译好的程序
 COPY --from=builder /go/bin/derper /usr/local/bin/derper
@@ -39,6 +40,10 @@ ENV DERP_PORT=6666
 ENV STUN_PORT=7777
 ENV HTTP_PORT=-1
 ENV VERIFY_CLIENTS=true
+
+# 生成证书脚本
+COPY gen-certs.sh /usr/local/bin/gen-certs.sh
+RUN chmod +x /usr/local/bin/gen-certs.sh
 
 # 添加启动脚本
 COPY start-derper.sh /usr/local/bin/start-derper.sh

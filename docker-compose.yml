@@ -9,12 +9,12 @@ services:
       - "6666:6666/tcp"
       - "7777:7777/udp"
     environment:
-      - TZ=Asia/Shanghai
-      - DERP_HOST=${DERP_HOST:-derp.selfhost}
-      - DERP_PORT=6666
-      - STUN_PORT=7777
-      - HTTP_PORT=-1
-      - VERIFY_CLIENTS=true
+      TZ: Asia/Shanghai
+      DERP_HOST: ${DERP_HOST:-derp.selfhost}
+      DERP_PORT: 6666
+      STUN_PORT: 7777
+      HTTP_PORT: -1
+      VERIFY_CLIENTS: true
     volumes:
       - /var/run/tailscale:/var/run/tailscale
     restart: unless-stopped
