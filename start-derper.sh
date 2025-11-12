@@ -10,13 +10,14 @@ if [ "$VERIFY_CLIENTS" = "true" ]; then
     echo "警告: 找不到tailscaled.sock，客户端验证已禁用"
     VERIFY_FLAG=""
   fi
-elif [ -n "$VERIFY_CLIENTS_URL" ]; then
+fi
+if [ -n "$VERIFY_CLIENTS_URL" ]; then
   # https://github.com/juanfont/headscale/issues/1953
   # https://github.com/juanfont/headscale/pull/2046
   # api spec: https://github.com/juanfont/headscale/blob/121be57b2d42332ae25f4a4dee48a8d2e1e61cad/hscontrol/app.go#L460
   # derp: https://github.com/tailscale/tailscale/blob/main/derp/derpserver/derpserver.go#L1395
   echo "启用客户端验证URL (使用VERIFY_CLIENTS_URL: ${VERIFY_CLIENTS_URL})"
-  VERIFY_FLAG="--verify-clients-url ${VERIFY_CLIENTS_URL}"
+  VERIFY_FLAG="--verify-client-url ${VERIFY_CLIENTS_URL}"
   if [ "$VERIFY_CLIENTS_URL_FAIL_OPEN" = "true" ]; then
     echo "启用客户端验证URL失败开放模式"
     VERIFY_FLAG="${VERIFY_FLAG} --verify-client-url-fail-open=true"
@@ -26,11 +27,11 @@ elif [ -n "$VERIFY_CLIENTS_URL" ]; then
   else
     echo "客户端验证URL失败开放模式未设置，使用默认值（true）" # https://github.com/tailscale/tailscale/blob/main/cmd/derper/derper.go#L80
   fi
-else
+fi
+if [ -z "$VERIFY_FLAG" ]; then
   echo "客户端验证已禁用"
   VERIFY_FLAG=""
 fi
-
 # 设置DERP Map配置参数
 REGION_ID=${REGION_ID:-"999"}
 REGION_CODE=${REGION_CODE:-"SELFHOST"}
